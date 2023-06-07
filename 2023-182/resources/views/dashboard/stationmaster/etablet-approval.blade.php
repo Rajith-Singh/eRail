@@ -121,8 +121,13 @@
     <div class="container">
         <div class="row align-items-end mb-4">
             <div class="col-lg-12">
-                <h1 class="section-title mb-3"> KADUGANNAWA <- PILIMATHALAWA -> PERADENIYA </h1>
+                <h1 class="section-title mb-3"> PILIMATHALAWA <- PERADENIYA -> GELIOYA </h1>
             </div>
+                @if (session('msg'))
+                    <div class="alert alert-success">
+                        {{ session('msg') }}
+                    </div>
+                @endif
         </div>
         <div class="row">
             <div class="col-lg-7 mb-5 mb-lg-0">
@@ -151,10 +156,7 @@
             <div class="col-lg-5" style="min-height: 400px;">
                 <div class="position-relative h-100 rounded overflow-hidden">
                     @foreach($data as $etablet)
-                        <form action="/approve/{{$etablet->id}}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-danger btn-block py-3 px-5">Accept eTablet</button>
-                        </form>
+                            <a href="/stationmaster/approve/{{$etablet->id}}" class="btn btn-danger btn-block py-3 px-5">Accept eTablet</a>
                     @endforeach
                 </div>
             </div>

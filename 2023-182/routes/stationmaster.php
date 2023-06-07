@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Stationmaster\StationmasterController;
+use App\Http\Controllers\eTabletController;
 
 
 Route::prefix('stationmaster')->name('stationmaster.')->group(function(){
@@ -21,6 +22,13 @@ Route::middleware(['auth:stationmaster','PreventBackHistory'])->group(function()
 
     Route::view('/etablet-request','dashboard.stationmaster.etablet-request')->name('etablet-request');
     Route::view('/etablet-approval','dashboard.stationmaster.etablet-approval')->name('etablet-approval');
+
+    Route::get('/accept/{station}',[eTabletController::class,'getRequest']);
+    Route::post('/request',[eTabletController::class,'storeTablet']);
+    Route::get('/approve/{id}', [eTabletController::class, 'updateTablet']);
+
+
+
 
 });
 });

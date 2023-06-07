@@ -186,7 +186,9 @@
 
                 <div class="col-lg-5" style="min-height: 400px;">
                     <div class="position-relative h-100 rounded overflow-hidden">
-                            <a href="/request/{{ Auth::guard('stationmaster')->user()->station }}" class="btn btn-primary btn-block py-3 px-5">eTablet Request</a>
+                            <a href="/stationmaster/etablet-request" class="btn btn-primary btn-block py-3 px-5">eTablet Request</a>
+                            <br>
+                            <a href="#" class="btn btn-success btn-block py-3 px-5">eTablet Approval</a>
                             <br><br>                          
 
                             <button class="btn btn-danger" href="{{ route('stationmaster.logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
