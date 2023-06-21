@@ -165,8 +165,15 @@
         <div class="container">
             <div class="row align-items-end mb-4">
                 <div class="col-lg-12">
-                    <h1 class="section-title mb-3">  IHALA KOTTE <- KADUGANNAWA -> PILIMATHALAWA </h1>
+                <h1 class="section-title mb-3">  {{ Auth::guard('stationmaster')->user()->down_station }} <- {{ Auth::guard('stationmaster')->user()->station }} -> {{ Auth::guard('stationmaster')->user()->up_station }} </h1>
                 </div>
+
+                @if (session('msg'))
+                    <div class="alert alert-success">
+                        {{ session('msg') }}
+                    </div>
+                @endif
+
             </div>
             <div class="row">
                 <div class="col-lg-7 mb-5 mb-lg-0">
@@ -191,20 +198,20 @@
 
                 <div class="col-lg-5" style="min-height: 400px;">
                     <div class="position-relative h-100 rounded overflow-hidden">
-                        <form action="/request" method="post">
+                        <form action="/stationmaster/request" method="post">
                             @csrf
-                            <input type="text" value="Kadugannawa" name="req" hidden> 
-                            <input type="text" value="Ihala Kotte" name="des" hidden>
-                            <input type="text" value="1" name="status" hidden>
-                            <button class="btn btn-primary btn-block py-3 px-5" style="margin-top: 150px;" type="submit">Request eTablet from Ihala Kotte</button>
+                            <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="req" hidden> 
+                            <input type="text" value="{{ Auth::guard('stationmaster')->user()->down_station }}" name="des" hidden>
+                            <input type="text" value="0" name="status" hidden>
+                            <button class="btn btn-primary btn-block py-3 px-5" style="margin-top: 150px;" type="submit">Request eTablet from Kadugannawa</button>
                         </form>
                         <br><br>
-                        <form action="/request" method="post">
+                        <form action="/stationmaster/request" method="post">
                         @csrf
-                            <input type="text" value="Kadugannawa" name="req" hidden> 
-                            <input type="text" value="Pilimathalawa" name="des" hidden>
+                            <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="req" hidden> 
+                            <input type="text" value="{{ Auth::guard('stationmaster')->user()->up_station }}" name="des" hidden>
                             <input type="text" value="0" name="status" hidden>                            
-                            <button class="btn btn-success btn-block py-3 px-5">Request eTablet from Pilimathalawa</button>
+                            <button class="btn btn-success btn-block py-3 px-5">Request eTablet from Peradeniya</button>
                         </form>
 
                     </div>
