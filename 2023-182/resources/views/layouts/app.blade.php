@@ -12,12 +12,14 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link href="/../../css/index.css" rel="stylesheet">
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body>
-    <div id="app">
+    <div >
+       
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
@@ -72,9 +74,22 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <div class="py-4">
             @yield('content')
-        </main>
+           
+        </div>
+     
     </div>
+    <div id="map"></div>
+   
+
+    <script async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9xkCZ1dvL1ho6NNLdquof56LM8Jh9wlc&callback=initMap">
+</script>
+  
+          <script src="/../../js/index.js"></script>
 </body>
 </html>
+
+
+

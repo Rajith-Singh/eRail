@@ -5,6 +5,7 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Stationmaster\StationmasterController;
 use App\Http\Controllers\eTabletController;
 use App\Http\Controllers\MLController;
+use App\Http\Controllers\TrainFindMaster\TrainFindController;
 
 
 /*
@@ -64,4 +65,10 @@ Route::post('/request',[eTabletController::class,'storeTablet']);
 Route::get('/accept/{station}',[eTabletController::class,'getRequest']);
 
 Route::post('/approve/{id}', [eTabletController::class, 'updateTablet']);
+
+
+Route::controller(TrainFindController::class)->prefix('find-my-train')->group(function () {
+    Route::get('/', 'index')->name('find-my-train.index');   
+    Route::get('/get-nearby-places', 'GetNearByPlaces')->name('find-my-train.get-nearby-places');  
+});
 
