@@ -9,17 +9,27 @@ use Stevebauman\Location\Facades\Location;
 class TrainFindController extends Controller
 {
     //
+    private $thimeh;
 
     public function index(){
         return view('layouts.TrainFinder.index',['data'=>'']);
     }
 
-    public function GetNearByPlaces(){      
-        
+    public function GetNearByPlaces(Request $request){    
+
+        $this->thimeh=$request->timeh.":".$request->timem.":00";
+     
+       // dd($request);
+        // $request->validate([               
+        //     'destination' => 'required',
+        //     'timepicker' => 'required',             
+          
+        // ]);              
+       
         //$position= $this->Get_user_current_location();       
 
         $baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
-        $location =  '6.8732403, 79.8799101';
+        $location =  '6.096015646689647, 80.14374765864015';//user location
         $radius = '1500';
         $type = 'train_station';
         $apiKey = 'AIzaSyB9xkCZ1dvL1ho6NNLdquof56LM8Jh9wlc';
@@ -30,12 +40,11 @@ class TrainFindController extends Controller
             'type' => $type,
             'key' => $apiKey,
         ]);
-
         //response data array
-       return $this->GetDistanceFromLocations($response['results'],$location);
+       return $this->GetDistanceFromLocations($response['results'],$location,$request->destination);
     }
 
-    public function GetDistanceFromLocations($place,$user_location){    
+    public function GetDistanceFromLocations($place,$user_location,$destination){    
         $my_place= array();
         $place_id =array();
 
@@ -44,13 +53,13 @@ class TrainFindController extends Controller
             $place_id [] = $value['place_id'];
         }    
 
-       return $this->destination($my_place,$place_id,$user_location);     
+       return $this->destination($my_place,$place_id,$user_location,$destination);     
     }
 
-    public function destination($destinations,$place_id,$user_location){
+    public function destination($destinations,$place_id,$user_location,$destination){
         $baseUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?';
-        $origins = $user_location;
-        $destinations = $destinations;
+        $origins = $user_location;//user location long lat
+        $destinations = $destinations;//nearest train station long lat
         $apiKey = 'AIzaSyB9xkCZ1dvL1ho6NNLdquof56LM8Jh9wlc';
 
         $response = Http::get($baseUrl, [
@@ -59,10 +68,10 @@ class TrainFindController extends Controller
             'key' => $apiKey,
         ]);    
 
-      return $this->GetNearestTrainStationOrder($response,$place_id);
+     return  $this->GetNearestTrainStationOrder($response,$place_id,$destination);
     }
 
-    public function GetNearestTrainStationOrder($stations,$place_id){
+    public function GetNearestTrainStationOrder($stations,$place_id,$destination){
       
         $nearby_place_data = array();
         $nearby_place_sort= array();
@@ -88,12 +97,15 @@ class TrainFindController extends Controller
         //sort ascending  order by using duration
         usort($nearby_place_data, function($a, $b) {
             return $a['duration'] - $b['duration'];
-        });     
-
+        });    
+        
+       $data= $this->CallDataSetApi($nearby_place_data,$destination);
+      //return $data;
+       //return $data['arrival_data'];
+    
  
-
       
-        return view('layouts.TrainFinder.index',['data'=>$nearby_place_data]);
+        return view('layouts.TrainFinder.index',['data'=>$data]);
 
     }
 
@@ -106,6 +118,21 @@ class TrainFindController extends Controller
             dd("error");
             // Failed retrieving position.
         }
+    }
+
+    public function CallDataSetApi($placeId,$destination){
+       // dd($time);
+     
+        $stationsJson = json_encode($placeId);
+        $baseUrl = 'http://192.168.1.15:8000/api/?';
+ 
+        $response = Http::get($baseUrl, [
+            'stations' => $stationsJson,
+            'destination' => $destination,
+            'time' => $this->thimeh,
+        ]); 
+      
+      return   $response->body();
     }
     
 }

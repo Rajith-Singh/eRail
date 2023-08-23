@@ -6,6 +6,8 @@ use App\Http\Controllers\Stationmaster\StationmasterController;
 use App\Http\Controllers\eTabletController;
 use App\Http\Controllers\MLController;
 use App\Http\Controllers\TrainFindMaster\TrainFindController;
+use App\Http\Controllers\YardManagement;
+
 
 
 /*
@@ -69,6 +71,13 @@ Route::post('/approve/{id}', [eTabletController::class, 'updateTablet']);
 
 Route::controller(TrainFindController::class)->prefix('find-my-train')->group(function () {
     Route::get('/', 'index')->name('find-my-train.index');   
-    Route::get('/get-nearby-places', 'GetNearByPlaces')->name('find-my-train.get-nearby-places');  
+    Route::post('/get-nearby-places', 'GetNearByPlaces')->name('find-my-train.get-nearby-places');  
+});
+
+Route::controller(YardManagement::class)->prefix('yard-management')->group(function () {
+    Route::get('/', 'index')->name('yard-management.index');   
+    Route::post('/create-train', 'CreateTrain')->name('create-train');  
+    Route::post('/train-operation', 'TrainOperation')->name('train-operation');  
+    Route::get('/report', 'GenPdf',)->name('yard-management.report');   
 });
 
