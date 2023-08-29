@@ -8,7 +8,7 @@
 
 
     <!-- Favicon -->
-    <link href="/../../favicon.ico" rel="icon">
+    <link href="favicon.ico" rel="icon">
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -18,13 +18,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
-    <link href="/../../lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="/../../lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="/../../css/style.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 </head>
-
 
 <body>
     <!-- Header Start -->
@@ -89,7 +88,7 @@
                             </div>
                             <a href="contact.html" class="nav-item nav-link">Contact</a>
                         </div>
-                        <a href="" class="btn btn-primary mr-3 d-none d-lg-block">Get A Quote</a>
+                        <a href="http://127.0.0.1:8000/stationmaster/login" class="btn btn-primary mr-3 d-none d-lg-block">Login</a>
                     </div>
                 </nav>
             </div>
@@ -98,90 +97,28 @@
     <!-- Header End -->
 
 
-        <!-- Page Header Start -->
-        <div class="container-fluid bg-primary py-5 mb-5">
-        <div class="container py-5">
-            <div class="row align-items-center py-4">
-                <div class="col-md-6 text-center text-md-left">
-                    <h1 class="display-4 mb-4 mb-md-0 text-secondary text-uppercase">e-Tablet Approval</h1>
-                </div>
-                <div class="col-md-6 text-center text-md-right">
-                    <div class="d-inline-flex align-items-center">
-                        <a class="btn btn-sm btn-outline-light" href="">Home</a>
-                        <i class="fas fa-angle-double-right text-light mx-2"></i>
-                        <a class="btn btn-sm btn-outline-light disabled" href="">eTablet Approval</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Page Header End -->
+<div class="container">
+  <h1 class="jumbotron bg-primary">Track Fault Detection</h1>
+  <br><br>
+  <form class="form-horizontal" action="/submit" method="post" enctype="multipart/form-data">
 
-    <div class="container-fluid py-5">
-    <div class="container">
-        <div class="row align-items-end mb-4">
-            <div class="col-lg-12">
-                <h1 class="section-title mb-3"> {{ Auth::guard('stationmaster')->user()->down_station }} <- {{ Auth::guard('stationmaster')->user()->station }} -> {{ Auth::guard('stationmaster')->user()->up_station }} </h1>
-            </div>
-                @if (session('message'))
-                    <div class="alert alert-success">
-                        {{ session('message') }}
-                    </div>
-                @endif
-        </div>
-        <div class="row">
-            <div class="col-lg-7 mb-5 mb-lg-0">
-                <div class="contact-form">
-                    <div id="success"></div>
-                    <form name="sentMessage" id="contactForm" novalidate="novalidate">
-                        <div class="form-row">
-                            <div class="col-sm-6 control-group">
-                                <h5> Status </h5>
-                                <input type="text" class="form-control p-4" id="name" value="Close" readonly/>
-                                <p class="help-block text-danger"></p>
-                            </div>
-                        </div>
-                        <h5> Log history </h5>
-                        <div class="control-group">
-                            <textarea class="form-control p-4" rows="6" id="message" readonly>
-                                @foreach($data as $etablet)    From: {{$etablet->req_station}}
-                                    Status: {{$etablet->status}}
-                                    Request Time: {{$etablet->created_at}}
-                                @endforeach
-                            </textarea>
-                        </div>
-                        <!--<input type="text">-->
-                    </form>
-                </div>
-            </div>
-            <div class="col-lg-5" style="min-height: 400px;">
-                <div class="position-relative h-100 rounded overflow-hidden">
-                    @foreach($data as $etablet)
-                                <div>
-                                <form action="/stationmaster/selectTrack" method="post">
-                                        @csrf <!-- Add this line to include the CSRF token -->
-                                        <input type="hidden" value="{{$etablet->id}}" name="id"> 
-                                    <select class="form-control p4" style="margin-top:25px" name="track">
-                                        <option> Main Track </option>
-                                        <option> Loop Track </option>
-                                    </select>
-                                    <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="station" readonly>
-                                    <button type="submit" class="btn btn-primary" style="margin-top:15px">Select Track</button>
-                                </form>
-                                
-                                <a href="/stationmaster/approve/{{$etablet->id}}/{{ Auth::guard('stationmaster')->user()->station }}" class="btn btn-danger btn-block py-3 px-5" style="margin-top:25px">Accept eTablet</a>
-                                </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="pwd">Upload Your Image :</label>
+      <div class="col-sm-10">          
+        <input type="file" class="form-control" placeholder="Hours Studied"  name="my_image" id="pwd">
+      </div>
     </div>
+
+    <div class="form-group">        
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-success">Submit</button>
+      </div>
+    </div>
+  </form>
+
+
+
 </div>
-<!-- Contact End -->
-
-
-
-
 
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-white mt-5 py-5 px-sm-3 px-md-5">
@@ -267,17 +204,25 @@
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="/../../lib/easing/easing.min.js"></script>
-    <script src="/../../lib/waypoints/waypoints.min.js"></script>
-    <script src="/../../lib/counterup/counterup.min.js"></script>
-    <script src="/../../lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="/../../lib/isotope/isotope.pkgd.min.js"></script>
-    <script src="/../../lib/lightbox/js/lightbox.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/counterup/counterup.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/isotope/isotope.pkgd.min.js"></script>
+    <script src="lib/lightbox/js/lightbox.min.js"></script>
 
+    <!-- Contact Javascript File -->
+    <script src="mail/jqBootstrapValidation.min.js"></script>
+    <script src="mail/contact.js"></script>
 
     <!-- Template Javascript -->
-    <script src="/../../js/main.js"></script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>
+
+
+
+
+
 

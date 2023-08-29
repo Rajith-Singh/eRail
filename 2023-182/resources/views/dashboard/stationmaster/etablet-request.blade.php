@@ -65,6 +65,25 @@
       padding: 5px;
     }
   </style>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script>
+
+        // Enable pusher logging - don't include this in production
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('f59cb7544bad8b84a40a', {
+         cluster: 'ap2'
+        });
+
+        var channel = pusher.subscribe('popup-channel');
+        channel.bind('etablet', function(data) {
+            alert(JSON.stringify(data));
+        });
+    </script>
+
 </head>
 
 
@@ -160,7 +179,7 @@
     <!-- Page Header End -->
 
 
-    <!-- Contact Start -->
+    <!-- Content Start -->
     <div class="container-fluid py-5">
         <div class="container">
             <div class="row align-items-end mb-4">
@@ -194,6 +213,7 @@
                                 <p class="help-block text-danger"></p>
                             </div>
                             </div></div>
+                        </form>
 
 
                 <div class="col-lg-5" style="min-height: 400px;">
@@ -203,16 +223,53 @@
                             <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="req" hidden> 
                             <input type="text" value="{{ Auth::guard('stationmaster')->user()->down_station }}" name="des" hidden>
                             <input type="text" value="0" name="status" hidden>
-                            <button class="btn btn-primary btn-block py-3 px-5" style="margin-top: 150px;" type="submit">Request eTablet from Kadugannawa</button>
+                            
+                                <div style="margin-top:25px;">
+                                    <p> Train ID </p>
+                                    <input type="text" class="form-control p4" name="train">
+                                </div>
+                                
+                            <button class="btn btn-primary btn-block py-3 px-5" style="margin-top: 20px;" type="submit">Request eTablet from {{ Auth::guard('stationmaster')->user()->down_station }}</button>
+
                         </form>
+
+                        <form action="/stationmaster/generatetablet" method="post">
+                            @csrf
+                            <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="t_req" hidden> 
+                            <input type="text" value="{{ Auth::guard('stationmaster')->user()->down_station }}" name="t_des" hidden>
+
+                            <button class="btn btn-danger btn-block py-3 px-5" style="margin-top: 20px;" type="submit">Generate eTablet</button>
+
+                        </form>
+                        
                         <br><br>
                         <form action="/stationmaster/request" method="post">
-                        @csrf
+                            @csrf
                             <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="req" hidden> 
                             <input type="text" value="{{ Auth::guard('stationmaster')->user()->up_station }}" name="des" hidden>
-                            <input type="text" value="0" name="status" hidden>                            
-                            <button class="btn btn-success btn-block py-3 px-5">Request eTablet from Peradeniya</button>
+                            <input type="text" value="0" name="status" hidden>
+                            
+                                <div style="margin-top:25px;">
+                                    <p> Train ID </p>
+                                    <input type="text" class="form-control p4" name="train">
+                                </div>
+                                
+                            <button class="btn btn-success btn-block py-3 px-5" style="margin-top: 20px;" type="submit">Request eTablet from {{ Auth::guard('stationmaster')->user()->up_station }}</button>
+
                         </form>
+
+                        <form action="/stationmaster/generatetablet" method="post">
+                            @csrf
+                            <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="t_req" hidden> 
+                            <input type="text" value="{{ Auth::guard('stationmaster')->user()->up_station }}" name="t_des" hidden>
+
+                            <button class="btn btn-danger btn-block py-3 px-5" style="margin-top: 20px;" type="submit">Generate eTablet</button>
+
+                        </form>
+                        
+
+
+
 
                     </div>
                 </div>
@@ -220,7 +277,7 @@
                 </div></div>
 
 
-    <!-- Contact End -->
+    <!-- Content End -->
 
 
 
