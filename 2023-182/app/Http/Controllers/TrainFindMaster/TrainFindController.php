@@ -29,7 +29,7 @@ class TrainFindController extends Controller
         //$position= $this->Get_user_current_location();       
 
         $baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
-        $location =  '6.096015646689647, 80.14374765864015';//user location
+        $location =  '7.029827189348443, 79.92175381378988';//user location
         $radius = '1500';
         $type = 'train_station';
         $apiKey = 'AIzaSyB9xkCZ1dvL1ho6NNLdquof56LM8Jh9wlc';

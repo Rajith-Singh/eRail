@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('content')
@@ -15,6 +16,7 @@
                         <div class="col-md-4">                       
                           <select class="form-select" aria-label="Default select example" name="destination" id="destination">
                               <option value="">Select Station</option>
+                              <option value="Maradana">Maradana</option>
                               <option value="Colombo Fort">Colombo Fort</option>
                               <option value="Secretariat Halt">Secretariat Halt</option>
                               <option value="Kompannavidiya">Kompannavidiya</option>
@@ -90,6 +92,53 @@
                               <option value="Wewurukannala">Wewurukannala</option>
                               <option value="Nakulugamuwa">Nakulugamuwa</option>
                               <option value="Beliatta">Beliatta</option>
+                              <option value="Ragama">Ragama</option>
+                              <option value="Gampaha">Gampaha</option>
+                              <option value="Veyangoda">Veyangoda</option>
+                              <option value="Mirigama">Mirigama</option>
+                              <option value="Polgahawela">Polgahawela</option>
+                              <option value="Rambukkana">Rambukkana</option>
+                              <option value="Polwathumodara">Polwathumodara</option>
+                              <option value="Kadigamuwa">Kadigamuwa</option>
+                              <option value="Ihalakotte">Ihalakotte</option>
+                              <option value="Balana">Balana</option>
+                              <option value="Kadugannawa">Kadugannawa</option>
+                              <option value="Pilimatalawa">Pilimatalawa</option>
+                              <option value="Kandy">Kandy</option>
+                              <option value="Peradeniya">Peradeniya</option>
+                              <option value="Geli Oya">Geli Oya</option>
+                              <option value="Gampola">Gampola</option>
+                              <option value="Tembiligala">Tembiligala</option>
+                              <option value="Ulapane">Ulapane</option>
+  			                      <option value="Nawalapitiya">Nawalapitiya</option>
+                              <option value="Inguruoya">Inguruoya</option>
+                              <option value="Galaboda">Galaboda</option>
+                              <option value="Watawala">Watawala</option>
+                              <option value="Ihalawatawala">Ihalawatawala</option>
+                              <option value="Rozella">Rozella</option>
+                              <option value="Hatton">Hatton</option>
+                              <option value="Kotagala">Kotagala</option>
+                              <option value="Talawakele">Talawakele</option>
+                              <option value="Watagoda">Watagoda</option>
+                              <option value="Great Western">Great Western</option>
+                              <option value="Radella">Radella</option>
+                              <option value="Nanuoya">Nanuoya</option>
+                              <option value="Parakumpura">Parakumpura</option>
+                              <option value="Ambewela">Ambewela</option>
+                              <option value="Pattipola">Pattipola</option>
+                              <option value="Ohiya">Ohiya</option>
+                              <option value="Idalgashinna">Idalgashinna</option>
+                              <option value="Haputale">Haputale</option>
+                              <option value="Diyatalawa">Diyatalawa</option>
+                              <option value="Bandarawela">Bandarawela</option>
+                              <option value="Kinigama">Kinigama</option>
+                              <option value="Heel Oya">Heel Oya</option>
+                              <option value="Kital Ella">Kital Ella</option>
+                              <option value="Ella">Ella</option>
+                              <option value="Demodara">Demodara</option>
+                              <option value="Uduwara">Uduwara</option>
+                              <option value="Hali Ela">Hali Ela</option>
+                              <option value="Badulla">Badulla</option>
                           </select>
                         </div>                      
                         
@@ -116,44 +165,169 @@
               
                 @php
                $data = json_decode($data,true);
-              $destination=$data['destination_data'];
+              $destination=$data['destination_data'];            
               $arraiv=$data['arrival_data'];
+              $ml_model=$data['ml_data'];
+              $transit_arrival=$data['transit_arrival'];
+              $transit_destination_1=$data['transit_destination_1'];
+              $trasit_final_start=$data['trasit_final_start'];
+              $trasit_final_destination=$data['trasit_final_destination'];  
+              //  dd($trasit_final_destination);     
         
                @endphp
             
-               @if($destination == 'null')
-                 <p class="text-center">No Train To Found</p>    
+               @if($destination == 'null' && $transit_arrival != 'null' &&$transit_destination_1 != 'null' && $trasit_final_destination != 'null')
+                 <p class="text-center">Transati avaiable</p>    
                @else
+
                <table class="table">
+                <tr>
+                  <td>Arrive Data</td>
+                  <td>Destination Data</td>
+                </tr>
+              
+                <tr>
+                @foreach ($arraiv as $arrival)
+
+                  <td>
+                    <table>
+                      <tr>
+                        <td> Station : {{$arrival['Station Name (Code)']}}</td>
+                      </tr>
+                      <tr>
+                        <td> Arrival Time : {{$arrival['Arrival Time']}}</td>                  
+                      </tr>
+                      <tr>           
+                        <td> Departure Time : {{$arrival['Departure Time']}}</td>                   
+                      </tr>
+                      <tr>          
+                        <td> Train Number or Train Name : {{$arrival['Train Number or Train Name']}}</td>
+                      </tr>
+                     </table>
+                     </td>
+                    @endforeach  
+
+                    @foreach ($destination as $destinations)
+
+                  <td>
+                    <!-- nested row -->
+
+                    <table>
+                     <tr>
+                      <td> Station : {{$destinations['Station Name (Code)']}}</td>
+                     </tr>
+                     <tr>
+                       <td> Arrival Time : {{$destinations['Arrival Time']}}</td>  
+
+                     </tr>
+                    </table>
+              
+                  </td>
+                  @endforeach  
+
+                </tr>
+               
+
+               </table>
+
+              @endif
+
+              @if($transit_arrival == 'null' && $transit_destination_1 == 'null' && $trasit_final_destination == 'null')
+                 <p class="text-center">Direct Trains Availae</p>    
+              @else
+              <table class="table">
                 <thead>
                   <tr>
+                    <th scope="col">Train Number or Train Name</th>
                     <th scope="col">Station Name</th>
-                    <th scope="col">Place ID</th>
-                    <th scope="col">Train Name</th>
-                    <th scope="col">Arrival</th>
-                    <th scope="col">dEPATUER</th>
+                    <th scope="col">Arrival Time</th>
+                    <th scope="col">Departure Time</th>
                   </tr>
                 </thead>
-                <tbody>               
-                   
-                    @foreach ($arraiv as $items)
-                  <tr >     
-                   <td>{{$items['Station Name (Code)']}}</td>
-                   <td>{{$items['Place ID']}}</td>
-                    <td>{{$items['Train Number or Train Name']}}</td>                                      
-                    <td>{{$items['Arrival Time']}}</td>
-                    <td>{{$items['Departure Time']}}</td>
-                  </tr> 
-                  @endforeach  
-                               
+                <tbody>
+                  @foreach ($transit_arrival as $data)
+                  <tr>                     
+                    <td>{{$data['Train Number or Train Name']}}</td>
+                    <td>{{$data['Station Name (Code)']}}</td>
+                    @php                    
+                    $datetimeString1 = $data['Arrival Time'];                   
+                    @endphp
+                    <td>{{ \Carbon\Carbon::parse($datetimeString1)->format('h:i A') }}</td>
+                    <td>{{$data['Departure Time']}}</td>
+                  </tr>  
+                  @endforeach                 
                 </tbody>
               </table>
-               @endif
-                                 
-              
-                                 
+
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Train Number or Train Name</th>
+                    <th scope="col">Station Name</th>
+                    <th scope="col">Arrival Time</th>
+                    <th scope="col">Departure Time</th>
+                  </tr>
+                </thead>
+                <tbody>                
+                  <tr>                          
+                    <td>{{$transit_destination_1['Train Number or Train Name']}}</td>
+                    <td>{{$transit_destination_1['Station Name (Code)']}}</td>
+
+                    @php                    
+                    $datetimeString = $transit_destination_1['Arrival Time'];                   
+                    @endphp
+
+                    <td>{{ \Carbon\Carbon::parse($datetimeString)->format('h:i A') }}</td>
+                    <td>{{$transit_destination_1['Departure Time']}}</td>
+                  </tr>                                  
+                </tbody>
+              </table>
+
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Train Number or Train Name</th>
+                    <th scope="col">Station Name</th>
+                    <th scope="col">Arrival Time</th>
+                    <th scope="col">Departure Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($trasit_final_start as $data)
+                  <tr>                     
+                    <td>{{$data['Train Number or Train Name']}}</td>
+                    <td>{{$data['Station Name (Code)']}}</td>
+                    <td>{{$data['Arrival Time']}}</td>
+                    <td>{{$data['Departure Time']}}</td>
+                  </tr>  
+                  @endforeach                 
+                </tbody>
+              </table>
+
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Train Number or Train Name</th>
+                    <th scope="col">Station Name</th>
+                    <th scope="col">Arrival Time</th>
+                    <th scope="col">Departure Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($trasit_final_destination as $data)
+                  <tr>                     
+                    <td>{{$data['Train Number or Train Name']}}</td>
+                    <td>{{$data['Station Name (Code)']}}</td>
+                    <td>{{$data['Arrival Time']}}</td>
+                    <td>{{$data['Departure Time']}}</td>
+                  </tr>  
+                  @endforeach                 
+                </tbody>
+              </table>
+
+              @endif                                 
                              
-                                   @endif
+              @endif
                   
             </div>
         </div>
