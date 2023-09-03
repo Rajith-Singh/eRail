@@ -6,30 +6,38 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Stevebauman\Location\Facades\Location;
+use Illuminate\Support\Facades\Validator;
+
 class TrainFindController extends Controller
 {
     //
     private $thimeh;
 
     public function index(){
-        return view('layouts.TrainFinder.index',['data'=>'']);
-    }
+        $position= $this->Get_user_current_location();
+        //dd($position);        
+        return view('layouts.TrainFinder.index')->with(['data'=>'','position'=>$position]);
+    }        
 
     public function GetNearByPlaces(Request $request){    
 
-        $this->thimeh=$request->timeh.":".$request->timem.":00";
-     
-       // dd($request);
-        // $request->validate([               
-        //     'destination' => 'required',
-        //     'timepicker' => 'required',             
-          
-        // ]);              
+
+        $validator = Validator::make($request->all(), [
+            'destination' => 'required|nullable',
+            'current_position'=>'required|nullable',
+            'timeh' => 'required|nullable',  
+            'timem' => 'required|nullable',
+        ]);
+
+        if($validator->fails()){
+            // return back()->with('errors', $validator->messages());
+            return response()->json(['errors' => $validator->errors()], 422);
+        }else{           
        
-        //$position= $this->Get_user_current_location();       
+        $this->thimeh=$request->timeh.":".$request->timem.":00";         
 
         $baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
-        $location =  '7.029827189348443, 79.92175381378988';//user location
+        $location =  '7.027893808136716, 79.91585404345092';//user location
         $radius = '1500';
         $type = 'train_station';
         $apiKey = 'AIzaSyB9xkCZ1dvL1ho6NNLdquof56LM8Jh9wlc';
@@ -40,8 +48,17 @@ class TrainFindController extends Controller
             'type' => $type,
             'key' => $apiKey,
         ]);
-        //response data array
-       return $this->GetDistanceFromLocations($response['results'],$location,$request->destination);
+        
+        return $this->GetDistanceFromLocations($response['results'],$location,$request->destination);
+    
+        
+        //dd($data);
+
+        //return redirect()->route('find-my-train.index',['data'=>$data]);
+       // return redirect()->back()->with(['data'=>$data]);
+
+        }    
+      
     }
 
     public function GetDistanceFromLocations($place,$user_location,$destination){    
@@ -99,20 +116,20 @@ class TrainFindController extends Controller
             return $a['duration'] - $b['duration'];
         });    
         
-       $data= $this->CallDataSetApi($nearby_place_data,$destination);
+       return $this->CallDataSetApi($nearby_place_data,$destination);
       //return $data;
        //return $data['arrival_data'];
     
  
       
-        return view('layouts.TrainFinder.index',['data'=>$data]);
+        //return view('layouts.TrainFinder.index',['data'=>$data]);
 
     }
 
     public function Get_user_current_location() :array{
         if ($position = Location::get()) {
             // Successfully retrieved position.
-            dd($position-> cityName );
+            //dd($position-> cityName );
             return ['lat'=>$position->latitude ,'lon'=>$position->longitude ];
         } else {
             dd("error");
@@ -131,8 +148,15 @@ class TrainFindController extends Controller
             'destination' => $destination,
             'time' => $this->thimeh,
         ]); 
+
+        if($response->getStatusCode() == 500){
+            return "no train found";
+        }else{
+            return   $response->body();
+        }
       
-      return   $response->body();
+      
+      
     }
     
 }

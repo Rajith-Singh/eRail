@@ -2,18 +2,29 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+
+<div class="container ">
+  <div id="map" style="width: auto; height: 400px"></div>
+</div>
+
+<div class="container error-container mt-5 ">
+  <!-- Validation errors will be displayed here -->
+</div>
+
+
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-header">{{ __('Find My Train') }}</div>
 
                 <div class="card-body">
-                  <form method="POST" action="{{ route('find-my-train.get-nearby-places') }}">
-                    @csrf
+                  <form >
+                  
+                   
                     <div class="row mb-0">                 
                       
-                        <div class="col-md-4">                       
+                        <div class="col-md-3">                       
                           <select class="form-select" aria-label="Default select example" name="destination" id="destination">
                               <option value="">Select Station</option>
                               <option value="Maradana">Maradana</option>
@@ -140,18 +151,22 @@
                               <option value="Hali Ela">Hali Ela</option>
                               <option value="Badulla">Badulla</option>
                           </select>
-                        </div>                      
+                        </div>
                         
                         <div class="col-md-2">                           
-                            <input type="text" class="form-control timepicker" id="timeh" name="timeh" placeholder="Enter Time">
+                          <input type="text" class="form-control " id="current_position" name="current_position" placeholder="Currunt Position">
+                        </div>
+                        
+                        <div class="col-md-2">                           
+                            <input type="text" class="form-control timepicker" id="timeh" name="timeh" placeholder="Enter Hour">
                         </div>    
                         
                         <div class="col-md-2">                           
-                          <input type="text" class="form-control timepicker" id="timem" name="timem" placeholder="Enter Time">
+                          <input type="text" class="form-control timepicker" id="timem" name="timem" placeholder="Enter Minutes">
                        </div> 
                     
-                        <div class="col-md-4 ">
-                          <button type="submit" class="btn btn-xs btn-info pull-right">Find Nearest Train Station</button>
+                        <div class="col-md-3 ">
+                          <button type="submit" class="btn btn-xs btn-info pull-right btn-submit">Find Nearest Train Station</button>
                       </div>
      
                   </div>              
@@ -159,180 +174,487 @@
                 </div>
                 </div>
             
-              @if(!$data)
-              
-              @else
-              
-                @php
-               $data = json_decode($data,true);
-              $destination=$data['destination_data'];            
-              $arraiv=$data['arrival_data'];
-              $ml_model=$data['ml_data'];
-              $transit_arrival=$data['transit_arrival'];
-              $transit_destination_1=$data['transit_destination_1'];
-              $trasit_final_start=$data['trasit_final_start'];
-              $trasit_final_destination=$data['trasit_final_destination'];  
-              //  dd($trasit_final_destination);     
-        
-               @endphp
-            
-               @if($destination == 'null' && $transit_arrival != 'null' &&$transit_destination_1 != 'null' && $trasit_final_destination != 'null')
-                 <p class="text-center">Transati avaiable</p>    
-               @else
-
-               <table class="table">
-                <tr>
-                  <td>Arrive Data</td>
-                  <td>Destination Data</td>
-                </tr>
-              
-                <tr>
-                @foreach ($arraiv as $arrival)
-
-                  <td>
-                    <table>
-                      <tr>
-                        <td> Station : {{$arrival['Station Name (Code)']}}</td>
-                      </tr>
-                      <tr>
-                        <td> Arrival Time : {{$arrival['Arrival Time']}}</td>                  
-                      </tr>
-                      <tr>           
-                        <td> Departure Time : {{$arrival['Departure Time']}}</td>                   
-                      </tr>
-                      <tr>          
-                        <td> Train Number or Train Name : {{$arrival['Train Number or Train Name']}}</td>
-                      </tr>
-                     </table>
-                     </td>
-                    @endforeach  
-
-                    @foreach ($destination as $destinations)
-
-                  <td>
-                    <!-- nested row -->
-
-                    <table>
-                     <tr>
-                      <td> Station : {{$destinations['Station Name (Code)']}}</td>
-                     </tr>
-                     <tr>
-                       <td> Arrival Time : {{$destinations['Arrival Time']}}</td>  
-
-                     </tr>
-                    </table>
-              
-                  </td>
-                  @endforeach  
-
-                </tr>
-               
-
-               </table>
-
-              @endif
-
-              @if($transit_arrival == 'null' && $transit_destination_1 == 'null' && $trasit_final_destination == 'null')
-                 <p class="text-center">Direct Trains Availae</p>    
-              @else
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">Train Number or Train Name</th>
-                    <th scope="col">Station Name</th>
-                    <th scope="col">Arrival Time</th>
-                    <th scope="col">Departure Time</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach ($transit_arrival as $data)
-                  <tr>                     
-                    <td>{{$data['Train Number or Train Name']}}</td>
-                    <td>{{$data['Station Name (Code)']}}</td>
-                    @php                    
-                    $datetimeString1 = $data['Arrival Time'];                   
-                    @endphp
-                    <td>{{ \Carbon\Carbon::parse($datetimeString1)->format('h:i A') }}</td>
-                    <td>{{$data['Departure Time']}}</td>
-                  </tr>  
-                  @endforeach                 
-                </tbody>
-              </table>
-
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">Train Number or Train Name</th>
-                    <th scope="col">Station Name</th>
-                    <th scope="col">Arrival Time</th>
-                    <th scope="col">Departure Time</th>
-                  </tr>
-                </thead>
-                <tbody>                
-                  <tr>                          
-                    <td>{{$transit_destination_1['Train Number or Train Name']}}</td>
-                    <td>{{$transit_destination_1['Station Name (Code)']}}</td>
-
-                    @php                    
-                    $datetimeString = $transit_destination_1['Arrival Time'];                   
-                    @endphp
-
-                    <td>{{ \Carbon\Carbon::parse($datetimeString)->format('h:i A') }}</td>
-                    <td>{{$transit_destination_1['Departure Time']}}</td>
-                  </tr>                                  
-                </tbody>
-              </table>
-
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">Train Number or Train Name</th>
-                    <th scope="col">Station Name</th>
-                    <th scope="col">Arrival Time</th>
-                    <th scope="col">Departure Time</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach ($trasit_final_start as $data)
-                  <tr>                     
-                    <td>{{$data['Train Number or Train Name']}}</td>
-                    <td>{{$data['Station Name (Code)']}}</td>
-                    <td>{{$data['Arrival Time']}}</td>
-                    <td>{{$data['Departure Time']}}</td>
-                  </tr>  
-                  @endforeach                 
-                </tbody>
-              </table>
-
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">Train Number or Train Name</th>
-                    <th scope="col">Station Name</th>
-                    <th scope="col">Arrival Time</th>
-                    <th scope="col">Departure Time</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach ($trasit_final_destination as $data)
-                  <tr>                     
-                    <td>{{$data['Train Number or Train Name']}}</td>
-                    <td>{{$data['Station Name (Code)']}}</td>
-                    <td>{{$data['Arrival Time']}}</td>
-                    <td>{{$data['Departure Time']}}</td>
-                  </tr>  
-                  @endforeach                 
-                </tbody>
-              </table>
-
-              @endif                                 
-                             
-              @endif
-                  
             </div>
+
+          <div class ="container mt-5 mb-5" id="ml_section">
+            <h2 class="text-center text-danger" id="ml_data"></h2>
+          </div>
+
+          <table class="table bg-1-dark" id="arrival_table">
+              <thead>
+                  <tr>
+                      <th>Train Number</th>                     
+                      <th>Station Name</th>
+                      <th>Arrival Time</th>
+                      <th>Departure Time</th>                   
+                  </tr>
+              </thead>
+              <tbody id="arrival-data-body">
+                  <!-- Data will be inserted here -->
+              </tbody>
+          </table>
+
+          <table class="table bg-1-light" id="destination_table">
+            <thead>
+                <tr>
+                    <th>Train Nfumber</th>                 
+                    <th>Station Name</th>
+                    <th>Arrival Time</th>
+                    <th>Departure Time</th>                   
+                </tr>
+            </thead>
+            <tbody id="destination-data-body">
+                <!-- Data will be inserted here -->
+            </tbody>
+          </table>
+
+          <table class="table bg-2-dark" id="transit_arrival_table">
+              <thead>
+                  <tr>
+                      <th>Train Number</th>                     
+                      <th>Station Name</th>
+                      <th>Arrival Time</th>
+                      <th>Departure Time</th>                  
+                  </tr>
+              </thead>
+              <tbody id="transit_arrival-data-body">
+                  <!-- Data will be inserted here -->
+              </tbody>
+          </table>
+
+          <table class="table bg-2-light" id="transit_destination_1_table">
+              <thead>
+                  <tr>
+                      <th>Train Number</th>                 
+                      <th>Station Name</th>
+                      <th>Arrival Time</th>
+                      <th>Departure Time</th>                     
+                  </tr>
+              </thead>
+              <tbody id="transit_destination_1-data-body">
+                <tr>
+                  <td id="train-number"></td>           
+                  <td id="station-name"></td>
+                  <td id="arrival-time"></td>
+                  <td id="departure-time"></td>                
+              </tr>
+              </tbody>
+          </table>
+
+          <table class="table bg-3-light" id="trasit_final_start_table">
+          <thead>
+          <tr>
+          <th>Train Number</th>         
+          <th>Station Name</th>
+          <th>Arrival Time</th>
+          <th>Departure Time</th>          
+          </tr>
+          </thead>
+          <tbody id="trasit_final_start-data-body">
+          <!-- Data will be inserted here -->
+          </tbody>
+          </table>
+
+          <table class="table bg-3-light" id="trasit_final_destination_table">
+          <thead>
+          <tr>
+            <th>Train Number</th>           
+            <th>Station Name</th>
+            <th>Arrival Time</th>
+            <th>Departure Time</th>            
+          </tr>
+          </thead>
+          <tbody id="trasit_final_destination-data-body">
+          <!-- Data will be inserted here -->
+          </tbody>
+          </table>  
+          
+          <div class ="container mt-5" id="is_train">
+            <h2 class="text-center text-danger" id="is_train_avaibale"></h2>
+          </div>
+
+            
         </div>
     </div>
 </div>
+
+@section('page-css')
+
+<style>
+.hidden {
+    display: none;
+}
+
+.bg-1-dark {
+  background-color: #D4EFDF; 
+  color: #000;
+}
+
+.bg-1-light {
+  background-color: #D0ECE7; 
+  color: #000;
+}
+
+.bg-2-dark {
+  background-color: #FDEBD0; 
+  color: #000;
+}
+
+.bg-2-light {
+  background-color: #FCF3CF; 
+  color: #000;
+}
+
+.bg-3-dark {
+  background-color: #E8DAEF; 
+  color: #000; 
+}
+
+.bg-3-light {
+  background-color: #EBDEF0; 
+  color: #000;
+}
+
+
+
+  </style>
+
+@stop
+
+@section('page-script')
+
+<script type="text/javascript">
+$(document).ajaxSetup
+var map, infoWindow;
+    var geocoder;
+    var currentPositionInput = document.getElementById('current_position');
+
+    $('#arrival_table').addClass('hidden');
+    $('#destination_table').addClass('hidden');
+    $('#transit_arrival_table').addClass('hidden');
+    $('#transit_destination_1_table').addClass('hidden');
+    $('#trasit_final_start_table').addClass('hidden');
+    $('#trasit_final_destination_table').addClass('hidden');
+    $('#is_train').addClass('hidden');
+    $('#ml_section').addClass('hidden');   
+     
+    $(".btn-submit").click(function(e){
+
+        $('#arrival_table').hide();
+        $('#destination_table').hide();
+        $('#transit_arrival_table').hide();
+        $('#transit_destination_1_table').hide();
+        $('#trasit_final_start_table').hide();
+        $('#trasit_final_destination_table').hide();
+        $('#is_train').hide();
+        $('#ml_section').hide();
+    
+        e.preventDefault();    
+     
+        var destination = $("#destination").val();
+        var current_position = $("#current_position").val();
+        var timeh = $("#timeh").val();
+        var timem = $("#timem").val();
+     
+        $.ajax({
+           type:'POST',
+           url:"{{ route('find-my-train.get-nearby-places') }}",
+           data:{ "_token": "{{ csrf_token() }}",destination:destination, current_position:current_position,timeh:timeh,timem:timem},
+           success:function(data){
+          
+              //Check is train avaibale
+            if(data =='no train found'){  //if not avaibale          
+                $('#is_train').show();
+                $('#is_train_avaibale').text("No Trains Available");     
+
+            }else{//if avaiabale
+
+              var jsonObject = JSON.parse(data);
+              console.log(jsonObject);
+
+              //Show ML DATA
+              $('#ml_section').show();
+              $('#ml_data').text('This is a '+jsonObject.ml_data + " Train");              
+             
+                  if (jsonObject.arrival_data && jsonObject.arrival_data != 'null') {
+                      $('#arrival_table').show();              
+                      var arrivalDataBody = $('#arrival-data-body');
+                      // Clear any existing table rows
+                      arrivalDataBody.empty();
+                      
+                      // Populate the table with data
+                      $.each(jsonObject.arrival_data, function (index, arrival) {
+                          arrivalDataBody.append('<tr>' +
+                              '<td>' + arrival['Train Number or Train Name'] + '</td>' +                     
+                              '<td>' + arrival['Station Name (Code)'] + '</td>' +
+                              '<td>' + arrival['Arrival Time'] + '</td>' +
+                              '<td>' + arrival['Departure Time'] + '</td>' +                                                      
+                              '</tr>');
+                      });
+                  }else {                     
+                  }
+
+                  if (jsonObject.destination_data && jsonObject.destination_data != 'null') {
+                      $('#destination_table').show();  
+                      var destinationDataBody = $('#destination-data-body');
+                      // Clear any existing table rows
+                      destinationDataBody.empty();
+                      // Populate the table with data
+                      $.each(jsonObject.destination_data, function (index, destination) {
+                        destinationDataBody.append('<tr>' +
+                              '<td>' + destination['Train Number or Train Name'] + '</td>' +                              
+                              '<td>' + destination['Station Name (Code)'] + '</td>' +
+                              '<td>' + destination['Arrival Time'] + '</td>' +
+                              '<td>' + destination['Departure Time'] + '</td>' +                                                  
+                              '</tr>');
+                      });
+                  }else {                      
+                  }
+
+                  if (jsonObject.transit_arrival && jsonObject.transit_arrival != 'null') {
+                    $('#arrival_table').hide();
+                      $('#transit_arrival_table').show();
+
+                      var transit_arrivalDataBody = $('#transit_arrival-data-body');
+
+                      // Clear any existing table rows
+                      transit_arrivalDataBody.empty();
+
+                      // Populate the table with data
+                      $.each(jsonObject.transit_arrival, function (index, transit_arrival) {
+
+                        var arrivalDatetime = new Date(transit_arrival['Arrival Time']);
+
+                        var hours24 = arrivalDatetime.getHours(); // 24-hour format
+                        var minutes = arrivalDatetime.getMinutes();
+                        var ampm = hours24 >= 12 ? 'PM' : 'AM';
+                      
+                        var formattedTime = hours24 + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
+
+
+
+                        transit_arrivalDataBody.append('<tr>' +
+                              '<td>' + transit_arrival['Train Number or Train Name'] + '</td>' +                              
+                              '<td>' + transit_arrival['Station Name (Code)'] + '</td>' +
+                              '<td>' + formattedTime + '</td>' +
+                              '<td>' + transit_arrival['Departure Time'] + '</td>' +                                                           
+                              '</tr>');
+                      });
+                  }else {                
+                  }
+
+                  if (jsonObject.transit_destination_1  && jsonObject.transit_destination_1 != 'null') {
+
+                      var arrivalDatetime = new Date(jsonObject.transit_destination_1['Arrival Time']);
+
+                      var hours24 = arrivalDatetime.getHours(); // 24-hour format
+                      var minutes = arrivalDatetime.getMinutes();
+                      var ampm = hours24 >= 12 ? 'PM' : 'AM';
+
+                      var formattedTime = hours24 + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
+
+                    
+                        $('#transit_destination_1_table').show();                  
+                        $('#train-number').text(jsonObject.transit_destination_1 ['Train Number or Train Name']);                      
+                        $('#station-name').text(jsonObject.transit_destination_1 ['Station Name (Code)']);
+                        $('#arrival-time').text(formattedTime);
+                        $('#departure-time').text(jsonObject.transit_destination_1 ['Departure Time']);                                           
+
+                  }else {                   
+                  }
+
+                  if (jsonObject.trasit_final_start && jsonObject.trasit_final_start != 'null') {
+                    $('#trasit_final_start_table').show();
+                    var trasit_final_startDataBody = $('#trasit_final_start-data-body');
+
+                    
+
+
+                      // Clear any existing table rows
+                      trasit_final_startDataBody.empty();
+
+                      // Populate the table with data
+                      $.each(jsonObject.trasit_final_start, function (index, trasit_final_start) {
+                        
+                        trasit_final_startDataBody.append('<tr>' +
+                              '<td>' + trasit_final_start['Train Number or Train Name'] + '</td>' +                              
+                              '<td>' + trasit_final_start['Station Name (Code)'] + '</td>' +
+                              '<td>' + trasit_final_start['Arrival Time'] + '</td>' +
+                              '<td>' + trasit_final_start['Departure Time'] + '</td>' +                             
+                              '</tr>');
+                      });
+                  }else {                     
+                  }   
+
+                  if (jsonObject.trasit_final_destination && jsonObject.trasit_final_destination != 'null') {
+                      $('#trasit_final_destination_table').show();
+                      var trasit_final_destinationDataBody = $('#trasit_final_destination-data-body');
+
+
+
+                      // Clear any existing table rows
+                      trasit_final_destinationDataBody.empty();
+
+                      // Populate the table with data
+                      $.each(jsonObject.trasit_final_destination, function (index, trasit_final_destination) {
+                        trasit_final_destinationDataBody.append('<tr>' +
+                              '<td>' + trasit_final_destination['Train Number or Train Name'] + '</td>' +                              
+                              '<td>' + trasit_final_destination['Station Name (Code)'] + '</td>' +
+                              '<td>' + trasit_final_destination['Arrival Time'] + '</td>' +
+                              '<td>' + trasit_final_destination['Departure Time'] + '</td>' +                                                    
+                              '</tr>');
+                      });
+                  }else {                      
+                  }
+              
+                    
+            }          
+                  
+               
+           },
+           error:function(data){            
+              $('.error-container').html('');            
+              $.each(data.responseJSON.errors, function (key, value) {
+                  $('.error-container').append('<p class="text-danger">' + value + '</p>');
+              });                
+           }
+
+        });
+    
+    });
+
+    function initMap() {
+      geocoder = new google.maps.Geocoder();
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {
+          lat: -34.397,
+          lng: 150.644
+        },
+        zoom: 50
+      });
+      infoWindow = new google.maps.InfoWindow;
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          var pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+
+          var marker = new google.maps.Marker({
+            position: pos,
+            map: map,
+            draggable: true,
+            title: 'Your position'
+          });
+          /*infoWindow.setPosition(pos);
+          infoWindow.setContent('Your position');
+          marker.addListener('click', function() {
+            infoWindow.open(map, marker);
+          });
+          infoWindow.open(map, marker);*/
+          map.setCenter(pos);
+
+
+          updateMarkerPosition(marker.getPosition());
+          geocodePosition(pos);
+
+          // Add dragging event listeners.
+          google.maps.event.addListener(marker, 'dragstart', function() {
+            updateMarkerAddress('Dragging...');
+          });
+
+          google.maps.event.addListener(marker, 'drag', function() {
+            updateMarkerStatus('Dragging...');
+            updateMarkerPosition(marker.getPosition());
+          });
+
+          google.maps.event.addListener(marker, 'dragend', function() {
+            var position = marker.getPosition();
+            
+
+           
+            currentPositionInput.value =  position.lat() + ', ' + position.lng();
+
+            updateMarkerStatus('Drag ended');
+            geocodePosition(marker.getPosition());
+            map.panTo(marker.getPosition());
+          });
+
+          google.maps.event.addListener(map, 'click', function(e) {
+            updateMarkerPosition(e.latLng);
+            geocodePosition(marker.getPosition());
+            marker.setPosition(e.latLng);
+            map.panTo(marker.getPosition());
+          });
+
+        }, function() {
+          handleLocationError(true, infoWindow, map.getCenter());
+        });
+      } else {
+        // Browser doesn't support Geolocation
+        handleLocationError(false, infoWindow, map.getCenter());
+      }
+
+    }
+
+    function geocodePosition(pos) {
+     
+      geocoder.geocode({
+        latLng: pos
+      }, function(responses) {
+        if (responses && responses.length > 0) {
+          console.log("sdsd");
+          updateMarkerAddress(responses[0].formatted_address);
+        } else {
+          updateMarkerAddress('Cannot determine address at this location.');
+        }
+      });
+    }
+
+    function updateMarkerStatus(str) {
+      // document.getElementById('markerStatus').innerHTML = str;
+    }
+
+    function updateMarkerPosition(latLng) {
+
+      // var inputField = document.getElementById('current_position');
+
+      // inputField.value = "Sd";
+
+
+      // var final_position= [
+      //   latLng.lat(),
+      //   latLng.lng()
+      // ].join(', ');
+
+      // console.log(final_position);
+     
+      // document.getElementById('currunt_position').innerHTML = "sds"
+    }
+
+    function updateMarkerAddress(str) {
+      // document.getElementById('address').innerHTML = str;
+    }
+
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+      //console.log(pos)
+      infoWindow.setPosition(pos);
+      infoWindow.setContent(browserHasGeolocation ?
+        'Error: The Geolocation service failed.' :
+        'Error: Your browser doesn\'t support geolocation.');
+      infoWindow.open(map);
+    }
+
+
+</script>
+
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9xkCZ1dvL1ho6NNLdquof56LM8Jh9wlc&callback=initMap" async defer></script>
+@stop
+
+
 @endsection
+
+
 
     
