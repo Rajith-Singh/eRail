@@ -8,6 +8,7 @@ use App\Models\Etablet_Request;
 use DB;
 use App\Events\etabletHandling;
 use App\Models\etablet;
+use App\Models\engine_tablet;
 
 class eTabletController extends Controller
 {
@@ -18,7 +19,7 @@ class eTabletController extends Controller
         $tablet->req_station=$request->req;
         $tablet->des_station=$request->des;
         $tablet->status=$request->status;
-        $tablet->train=$request->train;
+
         $tablet->save();
 
         return back()->with('msg', 'Request sent successfully.');
@@ -31,8 +32,28 @@ class eTabletController extends Controller
             ->where('des_station', '=', $station)
             ->get();
     
-        return view('dashboard.stationmaster.etablet-approval')->with('data', $tablet);
+        $track = DB::table('etablets')
+            ->select('id', 'req_station', 'des_station', 'train', 'created_at')
+            ->where('des_station', '=', $station)
+            ->get();
+    
+        return view('dashboard.stationmaster.etablet-approval', compact('tablet', 'track'));
     }
+    
+
+    // public function getRequest($station) {
+    //     $tablet = DB::table('etablet__requests')
+    //         ->join('etablets', function ($join) {
+    //             $join->on('etablet__requests.req_station', '=', 'etablets.req_station')
+    //                 ->orWhere('etablet__requests.des_station', '=', 'etablets.des_station');
+    //         })
+    //         ->select('etablets.id', 'etablet__requests.id', 'etablet__requests.req_station', 'etablet__requests.des_station', 'etablet__requests.status', 'etablet__requests.created_at')
+    //         ->where('etablet__requests.req_station', '=', $station)
+    //         ->get();
+    
+    //     return view('dashboard.stationmaster.etablet-approval')->with('data', $tablet);
+    // }
+    
 
 
     public function updateTablet($id, $des_station)
@@ -96,7 +117,7 @@ class eTabletController extends Controller
         $selectedTrack = $request->input('track');
     
         // Update the 'track' field for the found record
-        $tablet = DB::table('etablet__requests')
+        $tablet = DB::table('etablets')
             ->where(['id' => $id])
             ->update([
                 'track' => $selectedTrack,
@@ -174,16 +195,21 @@ class eTabletController extends Controller
         $randomHash = hash('sha256', uniqid(mt_rand(), true));
 
         $tablet = new etablet;
-        $tablet_cpy = new engine_tablet;
+        // $tablet_cpy = $tablet;
+        $engine_tablet = new engine_tablet;
 
         // Assign the random hash to the etablet column
         $tablet->etablet = $randomHash;
         $tablet->req_station=$request->t_req;
         $tablet->des_station=$request->t_des;
+        $tablet->train=$request->train;
         $tablet->save();
 
-
-
+        $engine_tablet->etablet = $randomHash;
+        $engine_tablet->train_id = $request->train;
+        $engine_tablet->start = $request->t_req;
+        $engine_tablet->end = $request->t_des;
+        $engine_tablet->save();
 
 
         // dd($request->all());

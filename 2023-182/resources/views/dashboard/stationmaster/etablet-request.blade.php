@@ -64,6 +64,24 @@
       margin-bottom: 10px;
       padding: 5px;
     }
+
+    .station-name {
+        background-color: #007bff; /* Set the background color */
+        color: #fff; /* Set the text color */
+        padding: 20px; /* Add padding for spacing */
+        border-radius: 10px; /* Add rounded corners */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a shadow */
+        overflow: hidden; /* Hide overflowing content */
+        transition: all 0.3s; /* Smooth transition for size changes */
+        white-space: nowrap; /* Prevent text from wrapping */
+    }
+
+    .station-name h2 {
+        font-size: 18px; /* Customize the font size */
+        margin: 0; /* Remove default margin */
+        color:#fff
+    }
+
   </style>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
@@ -83,6 +101,8 @@
             alert(JSON.stringify(data));
         });
     </script>
+
+    
 
 </head>
 
@@ -181,53 +201,58 @@
 
     <!-- Content Start -->
     <div class="container-fluid py-5">
-        <div class="container">
-            <div class="row align-items-end mb-4">
-                <div class="col-lg-12">
+    <div class="container">
+        <div class="row align-items-end mb-4">
+            <div class="col-lg-12">
                 <h1 class="section-title mb-3">  {{ Auth::guard('stationmaster')->user()->down_station }} <- {{ Auth::guard('stationmaster')->user()->station }} -> {{ Auth::guard('stationmaster')->user()->up_station }} </h1>
-                </div>
-
-                @if (session('msg'))
-                    <div class="alert alert-success">
-                        {{ session('msg') }}
-                    </div>
-                @endif
-
             </div>
-            <div class="row">
-                <div class="col-lg-7 mb-5 mb-lg-0">
-                    <div class="contact-form">
-                        <div id="success"></div>
-                        <form name="sentMessage" id="contactForm" novalidate="novalidate">
-                            <div class="form-row">
-                                <div class="col-sm-6 control-group">
-                                    <h5> Status </h5> <input type="text" class="form-control p-4" id="name" value="Close" readonly/>
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                            </div>
 
-                            <h5> Log history </h5> 
-                            <div class="control-group">
-                                <textarea class="form-control p-4" rows="6" id="message" readonly>
-                                </textarea>
+            @if (session('msg'))
+                <div class="alert alert-success">
+                    {{ session('msg') }}
+                </div>
+            @endif
+
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mb-5 mb-lg-0"> <!-- Use col-lg-12 to take up full width -->
+                <div class="contact-form">
+                    <div id="success"></div>
+                    <form name="sentMessage" id="contactForm" novalidate="novalidate">
+                        <div class="form-row">
+                            <div class="col-sm-6 control-group">
+                                <h5> Status </h5> 
+                                <input type="text" class="form-control p-4" id="name" value="Close" readonly/>
                                 <p class="help-block text-danger"></p>
                             </div>
-                            </div></div>
-                        </form>
+                        </div>
+
+                        <h5> Log history </h5> 
+                        <div class="control-group">
+                            <textarea class="form-control p-4" rows="6" id="message" readonly>
+                            </textarea>
+                            <p class="help-block text-danger"></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
-                <div class="col-lg-5" style="min-height: 400px;">
-                    <div class="position-relative h-100 rounded overflow-hidden">
-                        <form action="/stationmaster/request" method="post">
+                <!-- Down -->
+
+                <div class="container">
+                    <div class="row">
+                        <!-- Left View: Down Section -->
+                        <div class="col-lg-5 mb-4 mb-lg-0" style="min-height: 400px;">
+                            <div class="position-relative h-100 rounded overflow-hidden">
+                                <form action="/stationmaster/request" method="post">
                             @csrf
                             <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="req" hidden> 
                             <input type="text" value="{{ Auth::guard('stationmaster')->user()->down_station }}" name="des" hidden>
                             <input type="text" value="0" name="status" hidden>
-                            
-                                <div style="margin-top:25px;">
-                                    <p> Train ID </p>
-                                    <input type="text" class="form-control p4" name="train">
-                                </div>
                                 
                             <button class="btn btn-primary btn-block py-3 px-5" style="margin-top: 20px;" type="submit">Request eTablet from {{ Auth::guard('stationmaster')->user()->down_station }}</button>
 
@@ -238,22 +263,39 @@
                             <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="t_req" hidden> 
                             <input type="text" value="{{ Auth::guard('stationmaster')->user()->down_station }}" name="t_des" hidden>
 
+                            <div style="margin-top:15px;">
+                                    <p> Train ID </p>
+                                    <input type="text" class="form-control p4" name="train">
+                                </div>
+
                             <button class="btn btn-danger btn-block py-3 px-5" style="margin-top: 20px;" type="submit">Generate eTablet</button>
 
                         </form>
+
+                        </div>
+                    </div>
+
+
+                    <!-- Station -->
+
+                   
+                    <div class="col-lg-2 mb-4 mb-lg-0 text-center">
+                        <div class="station-name">
+                            <h2>{{ Auth::guard('stationmaster')->user()->station }}</h2>
+                        </div>
+                    </div>
+
+                        <!-- Up -->
                         
-                        <br><br>
-                        <form action="/stationmaster/request" method="post">
+                        <div class="col-lg-5" style="min-height: 400px;">
+                        <div class="position-relative h-100 rounded overflow-hidden">
+                            <form action="/stationmaster/request" method="post">
                             @csrf
                             <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="req" hidden> 
                             <input type="text" value="{{ Auth::guard('stationmaster')->user()->up_station }}" name="des" hidden>
                             <input type="text" value="0" name="status" hidden>
                             
-                                <div style="margin-top:25px;">
-                                    <p> Train ID </p>
-                                    <input type="text" class="form-control p4" name="train">
-                                </div>
-                                
+
                             <button class="btn btn-success btn-block py-3 px-5" style="margin-top: 20px;" type="submit">Request eTablet from {{ Auth::guard('stationmaster')->user()->up_station }}</button>
 
                         </form>
@@ -263,16 +305,21 @@
                             <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="t_req" hidden> 
                             <input type="text" value="{{ Auth::guard('stationmaster')->user()->up_station }}" name="t_des" hidden>
 
+                            <div style="margin-top:15px;">
+                                    <p> Train ID </p>
+                                    <input type="text" class="form-control p4" name="train">
+                                </div>
+                                
+
                             <button class="btn btn-danger btn-block py-3 px-5" style="margin-top: 20px;" type="submit">Generate eTablet</button>
 
                         </form>
                         
-
-
-
-
+                        </div>
                     </div>
                 </div>
+            </div>
+
                 </div>
                 </div></div>
 

@@ -144,7 +144,7 @@
                         <h5> Log history </h5>
                         <div class="control-group">
                             <textarea class="form-control p-4" rows="6" id="message" readonly>
-                                @foreach($data as $etablet)    From: {{$etablet->req_station}}
+                                @foreach($tablet as $etablet)    From: {{$etablet->req_station}}
                                     Status: {{$etablet->status}}
                                     Request Time: {{$etablet->created_at}}
                                 @endforeach
@@ -156,11 +156,13 @@
             </div>
             <div class="col-lg-5" style="min-height: 400px;">
                 <div class="position-relative h-100 rounded overflow-hidden">
-                    @foreach($data as $etablet)
+                    @foreach($tablet as $etablet)
                                 <div>
                                 <form action="/stationmaster/selectTrack" method="post">
                                         @csrf <!-- Add this line to include the CSRF token -->
-                                        <input type="hidden" value="{{$etablet->id}}" name="id"> 
+                                        @foreach($track as $track)
+                                        <input type="text" value="{{$track->id}}" name="id"> 
+                                        @endforeach
                                     <select class="form-control p4" style="margin-top:25px" name="track">
                                         <option> Main Track </option>
                                         <option> Loop Track </option>
