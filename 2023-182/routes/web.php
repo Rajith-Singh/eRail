@@ -78,6 +78,8 @@ Route::controller(YardManagement::class)->prefix('yard-management')->group(funct
     Route::post('/create-train', 'CreateTrain')->name('create-train');  
     Route::post('/train-operation', 'TrainOperation')->name('train-operation');  
     Route::get('/report', 'GenPdf',)->name('yard-management.report');   
+
+});
 Route::get('/text-to-speech', [TextToSpeechController::class, 'convertTextToSpeech']);
 
 Route::get('/approve/{req_station}', [eTabletController::class, 'showApprovalPage']);

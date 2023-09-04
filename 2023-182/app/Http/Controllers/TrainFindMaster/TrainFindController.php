@@ -141,7 +141,7 @@ class TrainFindController extends Controller
        // dd($time);
      
         $stationsJson = json_encode($placeId);
-        $baseUrl = 'http://192.168.1.15:8000/api/?';
+        $baseUrl = 'http://192.168.10.10:8000/api/?';
  
         $response = Http::get($baseUrl, [
             'stations' => $stationsJson,
