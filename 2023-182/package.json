@@ -15,7 +15,11 @@
     },
     "dependencies": {
         "cross-env": "^7.0.3",
-        "geolocation-marker": "^2.0.5",
+
+       "geolocation-marker": "^2.0.5",
         "jquery": "^3.7.0"
+        "laravel-echo": "^1.15.2",
+        "pusher-js": "^8.3.0"
+
     }
 }

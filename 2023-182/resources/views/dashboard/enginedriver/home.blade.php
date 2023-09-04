@@ -166,7 +166,7 @@
         <div class="container">
             <div class="row align-items-end mb-4">
                 <div class="col-lg-12">
-                    <h1 class="section-title mb-3"> Welcome  </h1>
+                    <h1 class="section-title mb-3"> Welcome {{ Auth::guard('stationmaster')->user()->first_name }} </h1>
                 </div>
             </div>
             <div class="row">
@@ -177,7 +177,7 @@
 
                             <h5> Activities </h5> 
                             <div class="control-group">
-                                <textarea class="form-control p-4" rows="6" id="message" readonly color="red">The tablet request came from the Pilimatalawa
+                                <textarea class="form-control p-4" rows="6" id="message" readonly>Sample Text Sample Text Sample Text Sample Text Sample Text Sample Text Sample Text Sample Text Sample Text 
                                 </textarea>
                                 <p class="help-block text-danger"></p>
                             </div>

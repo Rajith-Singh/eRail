@@ -7,7 +7,7 @@ use App\Http\Controllers\eTabletController;
 use App\Http\Controllers\MLController;
 use App\Http\Controllers\TrainFindMaster\TrainFindController;
 use App\Http\Controllers\YardManagement;
-
+use App\Http\Controllers\TextToSpeechController;
 
 
 /*
@@ -60,8 +60,6 @@ Route::prefix('user')->name('user.')->group(function(){
 
 Route::get('/flask', [FlaskController::class, 'executeFlaskApp']);
 
-Route::get('/predict/154.21/250.12/220/12/190.21/0.0/0.0/1/0,1/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/1/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0', [MLController::class, 'predict']);
-
 Route::post('/request',[eTabletController::class,'storeTablet']);
 
 Route::get('/accept/{station}',[eTabletController::class,'getRequest']);
@@ -69,7 +67,8 @@ Route::get('/accept/{station}',[eTabletController::class,'getRequest']);
 Route::post('/approve/{id}', [eTabletController::class, 'updateTablet']);
 
 
-Route::controller(TrainFindController::class)->prefix('find-my-train')->group(function () {
+  
+  Route::controller(TrainFindController::class)->prefix('find-my-train')->group(function () {
     Route::get('/', 'index')->name('find-my-train.index');   
     Route::post('/get-nearby-places', 'GetNearByPlaces')->name('find-my-train.get-nearby-places');  
 });
@@ -79,5 +78,12 @@ Route::controller(YardManagement::class)->prefix('yard-management')->group(funct
     Route::post('/create-train', 'CreateTrain')->name('create-train');  
     Route::post('/train-operation', 'TrainOperation')->name('train-operation');  
     Route::get('/report', 'GenPdf',)->name('yard-management.report');   
+Route::get('/text-to-speech', [TextToSpeechController::class, 'convertTextToSpeech']);
+
+Route::get('/approve/{req_station}', [eTabletController::class, 'showApprovalPage']);
+
+Route::get('/pusher', function () {
+    return view('pusher');
+
 });
 
