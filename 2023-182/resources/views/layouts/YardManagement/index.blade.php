@@ -448,9 +448,9 @@
     <div class="row justify-content-center" style="padding-top:10px">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">{{ __('Find My Train') }}</div>
+                <div class="card-header  bg-secondary text-white">{{ __('Yard Management') }}</div>
 
-                <div class="card-body">
+                <div class="card-body bg-primary">
                     <table class="table">
                         <thead>
                           <tr>
