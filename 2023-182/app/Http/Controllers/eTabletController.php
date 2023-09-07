@@ -9,6 +9,10 @@ use DB;
 use App\Events\etabletHandling;
 use App\Models\etablet;
 use App\Models\engine_tablet;
+use Carbon\Carbon;
+use GuzzleHttp\Client;
+use DateTime;
+
 
 class eTabletController extends Controller
 {
@@ -190,31 +194,138 @@ class eTabletController extends Controller
         return view('dashboard.stationmaster.etablet-request', compact('etablet'));
     }
 
-    public function generateTablet(Request $request){
-        // Generate a random unique hash
-        $randomHash = hash('sha256', uniqid(mt_rand(), true));
+public function generateTablet(Request $request){
+    // Generate a random unique hash
+    $randomHash = hash('sha256', uniqid(mt_rand(), true));
 
-        $tablet = new etablet;
-        // $tablet_cpy = $tablet;
-        $engine_tablet = new engine_tablet;
+    // Create a new tablet object
+    $tablet = new etablet;
 
-        // Assign the random hash to the etablet column
-        $tablet->etablet = $randomHash;
-        $tablet->req_station=$request->t_req;
-        $tablet->des_station=$request->t_des;
-        $tablet->train=$request->train;
-        $tablet->save();
+    // Assign the random hash to the etablet column
+    $tablet->etablet = $randomHash;
+    $tablet->req_station = $request->t_req;
+    $tablet->des_station = $request->t_des;
+    $tablet->train = $request->train;
 
-        $engine_tablet->etablet = $randomHash;
-        $engine_tablet->train_id = $request->train;
-        $engine_tablet->start = $request->t_req;
-        $engine_tablet->end = $request->t_des;
-        $engine_tablet->save();
+    // Save the tablet object to the database
+    $tablet->save();
 
+    // Convert the arrival time to a Unix timestamp in the "Asia/Colombo" timezone
+    $arrivalTimestamp = Carbon::parse($request->arrival_time, 'Asia/Colombo')->timestamp;
+    $arrivalTimeString = Carbon::createFromTimestamp($arrivalTimestamp, 'Asia/Colombo')->toDateTimeString();
+    
 
-        // dd($request->all());
+    // Prepare the data to send to the Google Sheet API
+    $data = [
+        'id' => $request->id,
+        'etablet' => $randomHash,
+        'req_station' => $request->t_req,
+        'des_station' => $request->t_des,
+        'train' => $request->train,
+        'track' => $request->track,
+        'arrival_time' => $arrivalTimeString, // Use the timestamp here
+    ];
+
+    // Make a POST request to the Google Sheet API endpoint
+    $response = Http::post('https://sheetdb.io/api/v1/f1ynqshw3qi1n', $data);
+
+    // Check if the request was successful
+    if ($response->successful()) {
         return back()->with('msg', 'eTablet sent successfully.');
+    } else {
+        return back()->with('error', 'Failed to send data to Google Sheet.');
+    }
+}
+
+
+public function predict(Request $request)
+{
+    // Extract the form data
+    $train = $request->input('train');
+    $arrivalTime = $request->input('arrival');
+    $crossingTime = $request->input('crossing_time'); // Update the input name
+    $code = $request->input('code');
+
+    // Perform time-to-float conversion for arrival and crossing_time
+    $arrivalFloat = $this->timeToFloat($arrivalTime);
+    $crossingFloat = $this->timeToFloat($crossingTime);
+
+    // Define the API URLs
+    $apiUrl = 'http://127.0.0.1:5000/predict/arrival';
+    $apiUrl2 = 'http://127.0.0.1:5000/predict/departure';
+    $apiUrl3 = 'http://127.0.0.1:5000/predict/crossing_train';
+
+    // Create an array with the data to send to the Flask API
+    $data = [
+        'train' => $train,
+        'latest_crossing_train_arrival' => $arrivalFloat,
+        'latest_crossing_time' => $crossingFloat,
+        'latest_crossing_station' => $code,
+    ];
+
+    // Send POST requests to the Flask APIs using Laravel's HTTP client
+    $response = Http::post($apiUrl, $data);
+    $response2 = Http::post($apiUrl2, $data);
+    $response3 = Http::post($apiUrl3, $data);
+
+    // Initialize prediction variables
+    $prediction = [];
+    $prediction2 = [];
+    $prediction3 = [];
+
+    // Check if the request for API 1 was successful
+    if ($response->successful()) {
+        // Parse the JSON response from the Flask API
+        $prediction = $response->json();
+
+        // Convert the float prediction to a time string
+        $prediction['arrival'] = $this->floatToTime($prediction['arrival']);
     }
 
-    
+    // Check if the request for API 2 was successful
+    if ($response2->successful()) {
+        // Parse the JSON response from the Flask API
+        $prediction2 = $response2->json();
+
+        // Convert the float prediction to a time string
+        $prediction2['departure'] = $this->floatToTime($prediction2['departure']);
+    }
+
+    // Check if the request for API 3 was successful
+    if ($response3->successful()) {
+        // Parse the JSON response from the Flask API
+        $prediction3 = $response3->json();
+
+        // Cast the 'crossing_train' prediction to an integer
+        $prediction3['crossing_train'] = (int)$prediction3['crossing_train'];
+    }
+
+    // Return the predictions to your view
+    return view('dashboard.stationmaster.arrival-departure-monitoring', [
+        'prediction' => $prediction,
+        'prediction2' => $prediction2,
+        'prediction3' => $prediction3,
+    ]);
 }
+
+    // Function to convert time string to float
+    private function timeToFloat($timeString)
+    {
+        list($hours, $minutes) = explode(':', $timeString);
+        return (float)$hours + ($minutes / 60.0);
+    }
+
+    private function floatToTime($floatValue)
+    {
+        // Separate the hours and minutes
+        $hours = floor($floatValue);
+        $minutes = round(($floatValue - $hours) * 60);
+
+        // Format the time string
+        return sprintf('%02d:%02d', $hours, $minutes);
+    }
+
+}
+
+
+    

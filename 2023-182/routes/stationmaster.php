@@ -28,7 +28,9 @@ Route::middleware(['auth:stationmaster','PreventBackHistory'])->group(function()
     });
 
 
-
+    Route::get('/arrival-departure-monitoring', function(){
+        return view('dashboard.stationmaster.arrival-departure-monitoring');
+    });
 
     Route::view('/etablet-approval','dashboard.stationmaster.etablet-approval')->name('etablet-approval');
 
@@ -38,7 +40,7 @@ Route::middleware(['auth:stationmaster','PreventBackHistory'])->group(function()
     Route::post('/selectTrack',[eTabletController::class,'selectTrack']);
     Route::post('/generatetablet',[eTabletController::class,'generateTablet']);
     
-
+    Route::post('/predict',[eTabletController::class,'predict']);
 
     // Route::post('/selectTrack', function(){
 

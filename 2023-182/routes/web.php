@@ -70,3 +70,15 @@ Route::get('/pusher', function () {
     return view('pusher');
 });
 
+Route::get('/control-unit', function(){
+    return view('dashboard.controlunit.dashboard');
+});
+
+Route::get('/test', function(){
+    return view('dashboard.controlunit.test');
+});
+
+Route::get('/test2', function(){
+    return view('test2');
+});
+
