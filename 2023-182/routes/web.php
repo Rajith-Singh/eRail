@@ -8,6 +8,9 @@ use App\Http\Controllers\MLController;
 use App\Http\Controllers\TrainFindMaster\TrainFindController;
 use App\Http\Controllers\YardManagement;
 use App\Http\Controllers\TextToSpeechController;
+use App\Http\Controllers\DelayController;
+
+
 
 
 /*
@@ -68,9 +71,14 @@ Route::post('/approve/{id}', [eTabletController::class, 'updateTablet']);
 
 
   
-  Route::controller(TrainFindController::class)->prefix('find-my-train')->group(function () {
+Route::controller(TrainFindController::class)->prefix('find-my-train')->group(function () {
     Route::get('/', 'index')->name('find-my-train.index');   
     Route::post('/get-nearby-places', 'GetNearByPlaces')->name('find-my-train.get-nearby-places');  
+});
+
+Route::controller(DelayController::class)->prefix('delay-my-train')->group(function () {
+    Route::get('/', 'index')->name('delay-my-train.index');   
+    Route::post('/get-delay-data', 'GetDelayData')->name('get--delay-my-train');  
 });
 
 Route::controller(YardManagement::class)->prefix('yard-management')->group(function () {
