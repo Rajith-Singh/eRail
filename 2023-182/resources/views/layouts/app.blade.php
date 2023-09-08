@@ -28,7 +28,7 @@
 
     <link href="/../../css/index.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
-
+    <link href="css/delay_css.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>

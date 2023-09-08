@@ -28,6 +28,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/view-point', function () {
+    return view('outside_view');
+})->name('view-point');
+
+
 Auth::routes();
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

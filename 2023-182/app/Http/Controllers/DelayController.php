@@ -13,20 +13,31 @@ class DelayController extends Controller
     }
 
     public function GetDelayData(Request $request){
-        $stationsJson = json_encode($placeId);
-        $baseUrl = 'http://192.168.1.15:8000/api/delay_prediction?';
- 
-        $response = Http::get($baseUrl, [
-            'stations' => $stationsJson,
-            'destination' => $destination,
-            'time' => $this->thimeh,
-        ]); 
+        // dd($request);
 
-        if($response->getStatusCode() == 500){
-            return "no train found";
-        }else{
-            return   $response->body();
-        }
+        $validator = Validator::make($request->all(), [
+            'train_no' => 'required|nullable',       
+        ]);
+
+        if($validator->fails()){
+            return response()->json(['errors' => $validator->errors()], 422);
+        }else{ 
+
+            $train_no = $request->train_no;
+            $baseUrl = 'http://192.168.10.10:8000/api/delay_prediction?';
+     
+            $response = Http::get($baseUrl, [
+                'train_no' => $train_no,            
+            ]); 
+    
+            if($response->getStatusCode() == 500){
+                return "no train found";
+            }else{
+                return   $response->body();
+            }
+
+        }    
+       
     }
 
 }
