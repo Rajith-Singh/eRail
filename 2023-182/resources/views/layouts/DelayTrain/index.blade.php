@@ -23,7 +23,7 @@
         <div class="row justify-content-center">
               <div class="col-md-8">
                   <div class="card ">
-                    <div class="card-header  bg-secondary text-white">{{ __('Find My Train') }}</div>
+                    <div class="card-header  bg-secondary text-white">{{ __('Delay Prediction') }}</div>
                       <div class="card-body bg-primary">
                         <form>    
             
@@ -133,7 +133,7 @@ $(document).ajaxSetup
      
         $.ajax({
            type:'POST',
-           url:"{{ route('get--delay-my-train') }}",
+           url:"{{ route('get-delay-my-train') }}",
            data:{ "_token": "{{ csrf_token() }}",train_no:train_no},
            success:function(data){
 

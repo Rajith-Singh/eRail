@@ -81,10 +81,11 @@ Route::controller(TrainFindController::class)->prefix('find-my-train')->group(fu
     Route::post('/get-nearby-places', 'GetNearByPlaces')->name('find-my-train.get-nearby-places');  
 });
 
-Route::controller(DelayController::class)->prefix('delay-my-train')->group(function () {
-    Route::get('/', 'index')->name('delay-my-train.index');   
-    Route::post('/get-delay-data', 'GetDelayData')->name('get--delay-my-train');  
-});
+
+Route::get('/delay-train', [DelayController::class,'index'])->name('delay-my-train-index'); 
+Route::get('/delay-train-form', [DelayController::class,'DelayFormIndex'])->name('delay-my-train-form'); 
+Route::post('/delay-train/get-delay-data', [DelayController::class,'GetDelayData'])->name('get-delay-my-train'); 
+Route::post('/delay-train-form-request', [DelayController::class,'DelayForm'])->name('post-delay-my-train'); 
 
 Route::controller(YardManagement::class)->prefix('yard-management')->group(function () {
     Route::get('/', 'index')->name('yard-management.index');   
@@ -93,6 +94,7 @@ Route::controller(YardManagement::class)->prefix('yard-management')->group(funct
     Route::get('/report', 'GenPdf',)->name('yard-management.report');   
 
 });
+
 Route::get('/text-to-speech', [TextToSpeechController::class, 'convertTextToSpeech']);
 
 Route::get('/approve/{req_station}', [eTabletController::class, 'showApprovalPage']);
