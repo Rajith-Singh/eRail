@@ -26,6 +26,12 @@ class eTabletController extends Controller
 
         $tablet->save();
 
+        // Call the API
+        $apiUrl = 'http://127.0.0.1:5000/tts?text=Hii. Welcome to the ' . urlencode($request->req) . ' railway station. Requested the etablet from ' . urlencode($request->des) . ' railway station.';
+        
+        $client = new Client();
+        $response = $client->get($apiUrl);
+
         return back()->with('msg', 'Request sent successfully.');
         //dd($request->all());
     }
@@ -35,6 +41,22 @@ class eTabletController extends Controller
             ->select('id', 'req_station', 'des_station', 'status', 'created_at')
             ->where('des_station', '=', $station)
             ->get();
+
+            $des_station = DB::table('etablet__requests')
+            ->select('des_station')
+            ->where('des_station', '=', $station)
+            ->get();
+
+            $req_station = DB::table('etablet__requests')
+            ->select('req_station')
+            ->where('des_station', '=', $station)
+            ->get();
+
+        // Call the API
+        // $apiUrl = 'http://127.0.0.1:5000/tts?text=Hii. Welcome to the ' . urlencode($req_station) . ' railway station. ' . urlencode($req_station) . ' railway station has requested e-tablet from ' . urlencode($des_station) . ' railway station.';
+        
+        // $client = new Client();
+        // $response = $client->get($apiUrl);
     
         $track = DB::table('etablets')
             ->select('id', 'req_station', 'des_station', 'train', 'created_at')
@@ -64,6 +86,12 @@ class eTabletController extends Controller
     {
         // Retrieve the $etablet data from your database based on the $id
         $etablet = DB::table('etablet__requests')->where('id', $id)->first();
+
+        // Call the API
+        $apiUrl = 'http://127.0.0.1:5000/tts?text=The e-tablet requested from was approved. You are now temporarily blocked.';
+
+        $client = new Client();
+        $response = $client->get($apiUrl);
     
         // Check if $etablet is found
         if (!$etablet) {
@@ -209,6 +237,12 @@ public function generateTablet(Request $request){
 
     // Save the tablet object to the database
     $tablet->save();
+
+    // Call the API
+    $apiUrl = 'http://127.0.0.1:5000/tts?text=An e-tablet was generated. This is only valid between '. urlencode($request->t_req) . 'and'. urlencode($request->t_des) .'stations.';
+
+    $client = new Client();
+    $response = $client->get($apiUrl);
 
     // Convert the arrival time to a Unix timestamp in the "Asia/Colombo" timezone
     $arrivalTimestamp = Carbon::parse($request->arrival_time, 'Asia/Colombo')->timestamp;

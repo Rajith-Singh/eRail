@@ -167,7 +167,7 @@
                                         <option> Main Track </option>
                                         <option> Loop Track </option>
                                     </select>
-                                    <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="station" readonly>
+                                    <input type="text" value="{{ Auth::guard('stationmaster')->user()->station }}" name="station" readonly hidden>
                                     <button type="submit" class="btn btn-primary" style="margin-top:15px">Select Track</button>
                                 </form>
                                 

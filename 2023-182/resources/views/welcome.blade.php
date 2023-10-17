@@ -77,7 +77,7 @@
                         <div class="navbar-nav mr-auto py-0">
                             <a href="index.html" class="nav-item nav-link active">Home</a>
                             <a href="about.html" class="nav-item nav-link">About</a>
-                            <a href="service.html" class="nav-item nav-link">Service</a>
+                            <a href="/control-unit" class="nav-item nav-link">Live Crossing</a>
                             <a href="project.html" class="nav-item nav-link">Project</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>

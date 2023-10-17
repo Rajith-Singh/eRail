@@ -87,6 +87,20 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script>
+
+        // Enable pusher logging - don't include this in production
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('f59cb7544bad8b84a40a', {
+         cluster: 'ap2'
+        });
+
+        var channel = pusher.subscribe('popup-channel');
+        channel.bind('etablet', function(data) {
+            alert(JSON.stringify(data));
+        });
+    </script>
 
     
 
@@ -170,13 +184,13 @@
         <div class="container py-5">
             <div class="row align-items-center py-4">
                 <div class="col-md-6 text-center text-md-left">
-                    <h1 class="display-4 mb-4 mb-md-0 text-secondary text-uppercase">e-Tablet Requesting</h1>
+                    <h1 class="display-4 mb-4 mb-md-0 text-secondary text-uppercase">Add Section</h1>
                 </div>
                 <div class="col-md-6 text-center text-md-right">
                     <div class="d-inline-flex align-items-center">
                         <a class="btn btn-sm btn-outline-light" href="">Home</a>
                         <i class="fas fa-angle-double-right text-light mx-2"></i>
-                        <a class="btn btn-sm btn-outline-light disabled" href="">eTablet Requesting</a>
+                        <a class="btn btn-sm btn-outline-light disabled" href="">Add Section</a>
                     </div>
                 </div>
             </div>
@@ -190,7 +204,7 @@
     <div class="container">
         <div class="row align-items-end mb-4">
             <div class="col-lg-12">
-                <h1 class="section-title mb-3">  {{ Auth::guard('stationmaster')->user()->down_station }} <- {{ Auth::guard('stationmaster')->user()->station }} -> {{ Auth::guard('stationmaster')->user()->up_station }} </h1>
+                <h1 class="section-title mb-3">  Admin </h1>
             </div>
 
             @if (session('msg'))
@@ -200,56 +214,112 @@
             @endif
 
         </div>
+        <div class="row">
+            <div class="col-lg-12 mb-5 mb-lg-0"> <!-- Use col-lg-12 to take up full width -->
+                <div class="contact-form">
+                    <div id="success"></div>
+                    <form name="sentSectionDuration" method="POST" id="contactForm" novalidate="novalidate" action="/store-section">
+                        @csrf
+                        <div class="form-row">
+                            <div class="col-sm-6 control-group">
+                                <h5> Train Type </h5> 
+                                <select class="form-control p-4" name="t_type">
+                                    <option>DEMU</option>
+                                    <option value="deel">DEEL</option>
+                                    <option value="deel-mail">DEEL - Night Mail</option>
+                                </select>
+
+                                <p class="help-block text-danger"></p>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="col-sm-6 control-group">
+                                <h5> Section </h5> 
+                                <select class="form-control p-4" name="section">
+                                    <option>KDT - PDA</option>
+                                    <option>PDA - GEY</option>
+                                    <option>GEY - GPL</option>
+                                    <option>GPL - TBL</option>
+                                    <option>TBL - ULP</option>
+                                    <option>ULP - NVP</option>
+                                    <option>NVP - INO</option>
+                                    <option>INO - GBD</option>
+                                    <option>GBD - WLA</option>
+                                    <option>WLA - IWL</option>
+                                    <option>IWL - RZL</option>
+                                    <option>RZL - HTN</option>
+                                    <option>HTN - KGA</option>
+                                    <option>KGA - TKL</option>
+                                    <option>TKL - WTG</option>
+                                    <option>WTG - GWN</option>
+                                    <option>GWN - RDL</option>
+                                    <option>RDL - NOA</option>
+                                    <option>NOA - PKP</option>
+                                    <option>PKP - ABL</option>
+                                    <option>ABL - PPL</option>
+                                    <option>PPL - OHA</option>
+                                    <option>OHA - IGH</option>
+                                    <option>IGH - HPT</option>
+                                    <option>HPT - DLA</option>
+                                    <option>DLA - BDA</option>
+                                    <option>BDA - KNM</option>
+                                    <option>KNM - HLO</option>
+                                    <option>HLO - KEL</option>
+                                    <option>KEL - ELL</option>
+                                    <option>ELL - DDR</option>
+                                    <option>DDR - UDW</option>
+                                    <option>UDW - HEA</option>
+                                    <option>HEA - BAD</option>
+
+                                    <option>PDA - NVP</option>
+                                    <option>NVP - HTN</option>
+                                    <option>HTN - GWN</option>
+                                    <option>GWN - NOA</option>
+                                    <option>NOA - OHA</option>
+                                    <option>OHA - IGH</option>
+                                    <option>IGH - HPT</option>
+                                    <option>HPT - DLA</option>
+                                    <option>DLA - BDA</option>
+                                    <option>BDA - ELL</option>
+                                    <option>ELL - DDR</option>
+                                    <option>DDR - HEA</option>
+
+                                    <option>ELL - BAD</option>
+                                    <option>NOA - HPT</option>
+                                    <option>TKL - NOA</option>
+                                    <option>HTN - TKL</option>
+                                </select>
+                                
+                                <p class="help-block text-danger"></p>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="col-sm-6 control-group">
+                                <h5> Duration (min) </h5> 
+                                <input type="number"  name="time" class="form-control p-4">
+                                <p class="help-block text-danger"></p>
+                            </div>
+                        </div>
+
+                        <h5> Note </h5> 
+                        <div class="control-group">
+                            <textarea class="form-control p-4" rows="6" id="message" name="note">
+                            </textarea>
+                            <p class="help-block text-danger"></p>
+                        </div>
+
+                        <input type="submit" class="btn btn-primary">
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 
-                <!-- Arrival -->
 
-                <div class="container">
-                    <div class="row">
-                        <!-- Left View: Down Section -->
-                        <div class="col-lg-5 mb-4 mb-lg-0" style="min-height: 400px;">
-                            <div class="position-relative h-100 rounded overflow-hidden">
-                        <form action="/stationmaster/predict" method="post">
-                            @csrf
-                            <br> 
-                            train: <input type="text" class="form-control p4" value="" name="train">
-                            <br>
-                            Arrival: <input type="time" class="form-control p4" value="" name="arrival">
-                            <br> 
-                            Crossing Time: <input type="time" class="form-control p4" value="" name="crossing_time">
-                            <br>
-                            <input type="text" value="27" name="code" readonly hidden>
-                                
-                            <button class="btn btn-primary btn-block py-3 px-5" style="margin-top: 20px;" type="submit">Confirm</button>
-
-                        </form>
-
-                        <h1>Prediction Result</h1>
-    
-                        @if(isset($prediction))
-                            <p>Arrival: {{ $prediction['arrival'] }}</p>
-                            <p>Departure: {{ $prediction2['departure'] }}</p>
-                            <p>Crossing Train: {{ $prediction3['crossing_train'] }}</p>
-                            <!-- Add other prediction data here -->
-                        @else
-                            <p>No prediction data available.</p>
-                        @endif
-
-                        </div>
-
-
-
-                    </div>
-                    </div>
-
-
-            </div>
-
-                </div>
-                </div></div>
 
 
     <!-- Content End -->

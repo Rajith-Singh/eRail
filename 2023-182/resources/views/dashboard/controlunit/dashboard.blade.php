@@ -1,122 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Admin Dashboard</title>
+<html>
+<head>
+  <title>Scatter Line Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Define your CSS styles here */
+    /* For example, you can style the chart canvas */
+    #myChart {
+      width: 800px;
+      height: 400px;
+    }
 
-    <!-- Montserrat Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    #myChart {
+        width: 100vw; /* Use 100% of the viewport width */
+        height: 100vh; /* Use 100% of the viewport height */
+        background-color: #fff; /* Set a background color for the chart container */
+        border-radius: 0; /* Remove rounded corners */
+        box-shadow: none; /* Remove the box shadow */
+        background-color: #fff; /* Set a background color for the chart container */
+        border-radius: 5px; /* Add rounded corners */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    }
 
-    <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  </style>
+</head>
+<body>
+  <canvas id="myChart"></canvas>
+  <script>
+    // Function to fetch data from the API and update the chart
+    async function fetchDataAndPlotChart() {
+      try {
+        // Fetch data from the API
+        const response = await fetch('https://sheetdb.io/api/v1/b8ewgyuuvef8o');
+        const data = await response.json();
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/controldashboard.css">
-  </head>
-  <body>
-    <div class="grid-container">
+        // Create an object to store data points for each train
+        const trainData = {};
 
-      <!-- Header -->
-      <header class="header">
-        <div class="menu-icon" onclick="openSidebar()">
-          <span class="material-icons-outlined">menu</span>
-        </div>
-        <div class="header-left">
-          <span class="material-icons-outlined">search</span>
-        </div>
-        <div class="header-right">
-          <span class="material-icons-outlined">notifications</span>
-          <span class="material-icons-outlined">email</span>
-          <span class="material-icons-outlined">account_circle</span>
-        </div>
-      </header>
-      <!-- End Header -->
+        // Loop through the data and organize it by train number
+        data.forEach(item => {
+          const trainNumber = item.train;
+          if (!trainData[trainNumber]) {
+            trainData[trainNumber] = [];
+          }
+          trainData[trainNumber].push({
+            x: parseFloat(item.time), // 'Time' is the key for x-axis data in the API response
+            y: item.station, // 'Station' is the key for y-axis data in the API response
+          });
+        });
 
-      <!-- Sidebar -->
-      <aside id="sidebar">
-        <div class="sidebar-title">
-          <div class="sidebar-brand">
-             eRail Control Unit
-          </div>
-          <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
-        </div>
+        // Reverse the order of y-axis categories for each train
+        for (const trainNumber in trainData) {
+          if (trainData.hasOwnProperty(trainNumber)) {
+            trainData[trainNumber].reverse();
+          }
+        }
 
-        <ul class="sidebar-list">
-          <li class="sidebar-list-item">
-            <a href="#" target="_blank">
-             Dashboard
-            </a>
-          </li>
-          <li class="sidebar-list-item">
-            <a href="#" target="_blank">
-              Track
-            </a>
-          </li>
-          <li class="sidebar-list-item">
-            <a href="#" target="_blank">
-              Live Monitoring
-            </a>
-          </li>
-        </ul>
-      </aside>
-      <!-- End Sidebar -->
+        // Create a scatter line chart
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const chart = new Chart(ctx, {
+          type: 'scatter', // Use 'scatter' for a scatter plot
+          data: {
+            datasets: [],
+          },
+          options: {
+            scales: {
+              x: {
+                type: 'linear', // Use a linear scale for the x-axis (numeric)
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Time Series',
+                },
+              },
+              y: {
+                type: 'category', // Use a category scale for the y-axis
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Stations',
+                },
+              },
+            },
+          },
+        });
 
-      <!-- Main -->
-      <main class="main-container">
-        <div class="main-title">
-          <h2>DASHBOARD</h2>
-        </div>
+        // Add datasets for each train to the chart
+        for (const trainNumber in trainData) {
+          if (trainData.hasOwnProperty(trainNumber)) {
+            chart.data.datasets.push({
+              label: trainNumber,
+              data: trainData[trainNumber],
+              borderColor: getRandomColor(), // Generate a random color for each train
+              borderWidth: 1,
+              pointBackgroundColor: getRandomColor(), // Generate a random color for points
+              pointRadius: 5,
+              showLine: true,
+            });
+          }
+        }
 
-        <div class="main-cards">
+        chart.update(); // Update the chart to display the data points
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
 
-          <div class="card">
-            <div class="card-inner">
-              <h3>Next Crossing</h3>
-            </div>
-            <h1>Rozella</h1>
-          </div>
+    // Function to generate a random color for chart elements
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
 
-          <div class="card">
-            <div class="card-inner">
-              <h3>Track</h3>
-            </div>
-            <h1>Main Track</h1>
-          </div>
-
-          <div class="card">
-            <div class="card-inner">
-              <h3>Delay</h3>
-            </div>
-            <h1>180min</h1>
-          </div>
-
-          <div class="card">
-            <div class="card-inner">
-              <h3>Alerts</h3>
-            </div>
-            <h1>2</h1>
-          </div>
-
-        </div>
-
-        <div class="charts">
-
-          <div class="charts-card">
-            <h2 class="chart-title">Train Crossing Process</h2>
-            <div id="area-chart"></div>
-          </div>
-
-        </div>
-      </main>
-      <!-- End Main -->
-
-    </div>
-
-    <!-- Scripts -->
-    <!-- ApexCharts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.5/apexcharts.min.js"></script>
-    <!-- Custom JS -->
-    <script src="js/controldashboard.js"></script>
-  </body>
+    // Call the function to fetch and plot the chart when the page loads
+    fetchDataAndPlotChart();
+  </script>
+</body>
 </html>

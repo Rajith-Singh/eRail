@@ -5,6 +5,8 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Stationmaster\StationmasterController;
 use App\Http\Controllers\eTabletController;
 use App\Http\Controllers\TextToSpeechController;
+use App\Http\Controllers\SectionController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -81,4 +83,11 @@ Route::get('/test', function(){
 Route::get('/test2', function(){
     return view('test2');
 });
+
+Route::get('/add-sections', function(){
+    return view('dashboard.admin.add-sections');
+});
+
+Route::post('/store-section',[SectionController::class,'storeSection']);
+
 

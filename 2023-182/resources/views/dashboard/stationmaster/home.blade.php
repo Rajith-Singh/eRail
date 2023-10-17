@@ -189,7 +189,9 @@
                             <a href="/stationmaster/etablet-request" class="btn btn-primary btn-block py-3 px-5">eTablet Request</a>
                             <br>
                             <a href="/stationmaster/accept/{{ Auth::guard('stationmaster')->user()->station }}" class="btn btn-success btn-block py-3 px-5">eTablet Approval</a>
-                            <br><br>                          
+                            <br><br>  
+                            <a href="/stationmaster/arrival-departure-monitoring" class="btn btn-info btn-block py-3 px-5">Predict Crossings</a>
+                            <br>                        
 
                             <button class="btn btn-danger" href="{{ route('stationmaster.logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
             <i class="fas fa-user-minus"></i> Logout </button>
